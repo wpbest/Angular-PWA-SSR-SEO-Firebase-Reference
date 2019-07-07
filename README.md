@@ -1,6 +1,6 @@
 # Angular-PWA-SSR-SEO-Firebase-Reference
 
-An Angular Referance PWA with SSR, SEO and Firebase
+An Angular Referance PWA with SSR, SEO and Firebase (angularpwassrseofbref)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.1.0.
 
@@ -79,7 +79,7 @@ AOT compilation with Ivy is faster and should be used by default. In the angular
 ```
 {
   "projects": {
-    "ng8template": {
+    "angularpwassrseofbref": {
       "architect": {
         "build": {
           "options": {
@@ -163,7 +163,7 @@ Add the meta data in the ```<head>``` section in the intex.html file in the src 
   <meta name="description" content="This is a meta description sample. We can add up to 160 characters.">
 ```
 
-### Add Firebase hosting
+## Add Firebase Functionality
 
 Add the needed packages
 
@@ -171,9 +171,9 @@ Add the needed packages
 npm install firebase @angular/fire --save
 ```
 
-### Import the Angular Fire libraries
+### Import the AngularFire libraries
 
-Modify app.module.ts to import the Firebase libraries. Add import for environment
+Modify app.module.ts to import the Firebase libraries. Add the import for environment
 
 ```
 import { AngularFireModule } from '@angular/fire';
@@ -185,7 +185,7 @@ import { environment } from '../environments/environment';
 @NgModule({
   imports: [
     ...
-    AngularFireModule.initializeApp(config), // initialize
+    AngularFireModule.initializeApp(environment.firebaseConfig), // initialize
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth
     AngularFireStorageModule, // storage
@@ -201,14 +201,14 @@ environment.ts:
 ```
 export const environment = {
   production: false,
-  firebase: {
-    apiKey: '',
-    authDomain: '',
-    databaseURL: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: ''
+  firebaseConfig: {
+    apiKey: '...',
+    authDomain: '...',
+    databaseURL: '...',
+    projectId: '...',
+    storageBucket: '...',
+    messagingSenderId: '...',
+    appId: '...'
   }
 };
 ```
@@ -218,138 +218,26 @@ environment.prod.ts
 ```
 export const environment = {
   production: true,
-  firebase: {
-    apiKey: '',
-    authDomain: '',
-    databaseURL: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: ''
+  firebaseConfig: {
+    apiKey: '...',
+    authDomain: '...',
+    databaseURL: '...',
+    projectId: '...',
+    storageBucket: '...',
+    messagingSenderId: '...',
+    appId: '...'
   }
 };
 ```
 
-### Use Firebase Cloud Functions for SSR
-
-Modify the firebase.json file:
-
-```
-{
-  "hosting": {
-    "public": "dist/browser",
-     // ...
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "ssr"
-      }
-    ]
-  }
-}
-```
-
-Remove the Express Server Listener
-
-When deploying to AppEngine we need to tell the server to listen to requests. In Cloud Functions, this is already happening under the hood, so we need to update our server code.
-
-Make sure to export the express app, then remove the call to listen.
-
-```
-export const app = express();
-
-// ...
-
-// remove or comment out these lines
-
-// Start up the Node server
-// app.listen(PORT, () => {
-//   console.log(`Node Express server listening on http://localhost:${PORT}`);
-// })
-```
-
-Update the Webpack Config file webpack.server.config.js
-
-```
-  output: {
-    // Puts the output at the root of the dist folder
-    path: path.join(__dirname, 'dist'),
-    library: 'app',
-    libraryTarget: 'umd',
-    filename: '[name].js',
-  },
-```
-
-Copy the Angular App to the Function Environment
-
-The Firebase function needs access to your Angular build in order to render it on the server. Let’s write a simple node script that copies the most recent Angular app to the functions dir on build.
-
-```
-cd functions
-npm install fs-extra --save
-```
-
-Create the file cp-angular.js
-
-```
-const fs = require('fs-extra');
-
-(async() => {
-
-    const src = '../dist';
-    const copy = './dist';
-
-    await fs.remove(copy);
-    await fs.copy(src, copy);
-
-})();
-```
-
-Update the build script to copy over your Angular files. While here, you can also mark this function to be deployed with Node v8.
-
-```
-{
-  "name": "functions",
-  "engines": {
-    "node": "8"
-  },
-  "scripts": {
-    "build": "node cp-angular && tsc"
-  }
-}
-```
-
-The function itself only needs to import the universal app into the current working directory. That’s why we need to copy it to the function’s environment.
-Modify index.ts
-
-```
-import * as functions from 'firebase-functions';
-const universal = require(`${process.cwd()}/dist/server`).app;
-
-export const ssr = functions.https.onRequest(universal);
-```
-
-Since there is now the needed cp_angular.js file, modify .gitignore file and change it as follows
-
-```
-## Compiled JavaScript files
-lib/*.js
-lib/*.js.map
-
-# Typescript v1 declaration files
-typings/
-dist/
-node_modules/
-```
-
-### Setup Firebase
+### Setup Firebase Tools
 
 ```
 firebase login
 ? Allow Firebase to collect anonymous CLI usage and error reporting information? (Y/n) Y
 
 Visit this URL on any device to log in:
-https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=754720034&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+https://accounts.google.com/o/oauth2/auth?client_id=...
 
 Waiting for authentication...
 
@@ -367,7 +255,7 @@ firebase init
 
 You're about to initialize a Firebase project in this directory:
 
-  /Users/william.best/Documents/GitHub/ng8template
+  /Users/william.best/Documents/GitHub/angular-pwa-ssr-seo-firebase
 
 ? Which Firebase CLI features do you want to set up for this folder? Press Space to select features, then Enter to confirm your choi
 ces. 
@@ -379,7 +267,7 @@ ces.
 
 You're about to initialize a Firebase project in this directory:
 
-  /Users/william.best/Documents/GitHub/ng8template
+  /Users/william.best/Documents/GitHub/angular-pwa-ssr-seo-firebase
 
 ? Which Firebase CLI features do you want to set up for this folder? Press Space to select features, then Enter to confirm your choi
 ces. Firestore: Deploy rules and create indexes for Firestore, Functions: Configure and deploy Cloud Functions, Hosting: Configure a
@@ -392,7 +280,7 @@ You can create multiple project aliases by running firebase use --add,
 but for now we'll just set up a default project.
 
 ? Select a default Firebase project for this directory: 
-❯ ng8template-94eb6 (ng8template) 
+❯ angular-pwa-ssr-seo-firebase (angular-pwa-ssr-seo-firebase) 
 
 === Firestore Setup
 
@@ -456,62 +344,119 @@ i  Writing configuration info to firebase.json...
 i  Writing project information to .firebaserc...
 
 ✔  Firebase initialization complete!
+```
 
-firebase deploy
+### Use Firebase Cloud Functions for SSR
 
-=== Deploying to 'ng8template-94eb6'...
+Modify the firebase.json file:
 
-i  deploying storage, firestore, functions, hosting
-Running command: npm --prefix "$RESOURCE_DIR" run lint
+```
+{
+  "hosting": {
+    "public": "dist/browser",
+     // ...
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "ssr"
+      }
+    ]
+  }
+}
+```
 
-> functions@ lint C:\Users\willi\OneDrive\Documents\GitHub\ng8template\functions
-> tslint --project tsconfig.json
+Remove the Express Server Listener
 
-Running command: npm --prefix "$RESOURCE_DIR" run build
+When deploying to AppEngine we need to tell the server to listen to requests. In Cloud Functions, this is already happening under the hood, so we need to update our server code.
 
-> functions@ build C:\Users\willi\OneDrive\Documents\GitHub\ng8template\functions
-> node cp-angular && tsc
+Make sure to export the express app, then remove the call to listen.
 
-+  functions: Finished running predeploy script.
-i  storage: checking storage.rules for compilation errors...
-+  storage: rules file storage.rules compiled successfully
-i  firestore: checking firestore.rules for compilation errors...
-i  firestore: reading indexes from firestore.indexes.json...
-+  firestore: rules file firestore.rules compiled successfully
-i  functions: ensuring necessary APIs are enabled...
-+  functions: all necessary APIs are enabled
-i  storage: uploading rules storage.rules...
-i  firestore: uploading rules firestore.rules...
-+  firestore: deployed indexes in firestore.indexes.json successfully
-i  functions: preparing functions directory for uploading...
-i  functions: packaged functions (3.05 MB) for uploading
-+  functions: functions folder uploaded successfully
-i  hosting[ng8template-94eb6]: beginning deploy...
-i  hosting[ng8template-94eb6]: found 28 files in dist/browser
-+  hosting[ng8template-94eb6]: file upload complete
-+  storage: released rules storage.rules to firebase.storage/ng8template-94eb6.appspot.com
-+  firestore: released rules firestore.rules to cloud.firestore
-i  functions: updating Node.js 8 function ssr(us-central1)...
-+  functions[ssr(us-central1)]: Successful update operation.
-i  hosting[ng8template-94eb6]: finalizing version...
-+  hosting[ng8template-94eb6]: version finalized
-i  hosting[ng8template-94eb6]: releasing new version...
-+  hosting[ng8template-94eb6]: release complete
+```
+export const app = express();
 
-+  Deploy complete!
+// ...
 
-Project Console: https://console.firebase.google.com/project/ng8template-94eb6/overview
-Hosting URL: https://ng8template-94eb6.firebaseapp.com
+// remove or comment out these lines
+
+// Start up the Node server
+// app.listen(PORT, () => {
+//   console.log(`Node Express server listening on http://localhost:${PORT}`);
+// })
+```
+
+Update the Webpack Config file webpack.server.config.js
+
+```
+  output: {
+    // Puts the output at the root of the dist folder
+    path: path.join(__dirname, 'dist'),
+    library: 'app',
+    libraryTarget: 'umd',
+    filename: '[name].js',
+  },
+```
+Add Firebase Polyfills to Express
+
+Firebase uses Websockets and XHR not included in Angular that we need to polyfill.
+
+```
+npm install ws xhr2 bufferutil utf-8-validate  --save
+```
+
+Modify server.ts by declaring them on Node global at the top of the file.
+
+```
+(global as any).WebSocket = require('ws');
+(global as any).XMLHttpRequest = require('xhr2');
+```
+The function itself only needs to import the universal app into the current working directory. That’s why we need to copy it to the function’s environment.
+Modify index.ts
+
+```
+import * as functions from 'firebase-functions';
+const universal = require(`${process.cwd()}/dist/server`).app;
+
+export const ssr = functions.https.onRequest(universal);
+```
+
+Update the package.json build:ssr to call the functions build script. Also update the serve:ssr to call firebase serve.
+
+```
+{
+  "scripts": {
+    "serve:ssr": "firebase serve",
+    "build:ssr": "npm run build:client-and-server-bundles && npm run compile:server && npm run build:functions",
+  }
+}
 ```
 
 
-## Install Node Packages
+Update the package.json in the functions subdirectory build script. Notice the functions to be deployed with Node v8.
 
 ```
-npn install
+{
+  "name": "functions",
+  "engines": {
+    "node": "8"
+  },
+  "scripts": {
+    ...
+    "build": "mkdir -p dist && rm -r ./dist && cp -r ../dist . && tsc",
+    ...
+  }
+}
 ```
 
-## Install NPM Check Update (NCU) ad Check packages.json for outdated packages
+## Install Node Packages in the Angular application and the Firebase functions.
+
+```
+npm install
+cd functions
+npm install
+cd ..
+```
+
+### Install NPM Check Update (NCU) ad Check packages.json for outdated packages
 
 At times, the package.json file can get out of date from what is current. To check for outdated packages install npm-check-update, run ncu to see outdated packages, and then run ncu -u to update the packages.
 
@@ -532,6 +477,57 @@ npm run build:ssr
 ```
 npm run serve:ssr
 ```
+
+## Deploy Firebase Project
+
+```
+firebase deploy
+
+=== Deploying to 'angular-pwa-ssr-seo-firebase'...
+
+i  deploying storage, firestore, functions, hosting
+Running command: npm --prefix "$RESOURCE_DIR" run lint
+
+> functions@ lint C:\Users\willi\OneDrive\Documents\GitHub\angular-pwa-ssr-seo-firebase\functions
+> tslint --project tsconfig.json
+
+Running command: npm --prefix "$RESOURCE_DIR" run build
+
+> functions@ build C:\Users\willi\OneDrive\Documents\GitHub\angular-pwa-ssr-seo-firebase\functions
+> node cp-angular && tsc
+
++  functions: Finished running predeploy script.
+i  storage: checking storage.rules for compilation errors...
++  storage: rules file storage.rules compiled successfully
+i  firestore: checking firestore.rules for compilation errors...
+i  firestore: reading indexes from firestore.indexes.json...
++  firestore: rules file firestore.rules compiled successfully
+i  functions: ensuring necessary APIs are enabled...
++  functions: all necessary APIs are enabled
+i  storage: uploading rules storage.rules...
+i  firestore: uploading rules firestore.rules...
++  firestore: deployed indexes in firestore.indexes.json successfully
+i  functions: preparing functions directory for uploading...
+i  functions: packaged functions (3.05 MB) for uploading
++  functions: functions folder uploaded successfully
+i  hosting[angular-pwa-ssr-seo-firebase]: beginning deploy...
+i  hosting[angular-pwa-ssr-seo-firebase]: found 28 files in dist/browser
++  hosting[angular-pwa-ssr-seo-firebase]: file upload complete
++  storage: released rules storage.rules to firebase.storage/angular-pwa-ssr-seo-firebase.appspot.com
++  firestore: released rules firestore.rules to cloud.firestore
+i  functions: updating Node.js 8 function ssr(us-central1)...
++  functions[ssr(us-central1)]: Successful update operation.
+i  hosting[angular-pwa-ssr-seo-firebase]: finalizing version...
++  hosting[angular-pwa-ssr-seo-firebase]: version finalized
+i  hosting[angular-pwa-ssr-seo-firebase]: releasing new version...
++  hosting[angular-pwa-ssr-seo-firebase]: release complete
+
++  Deploy complete!
+
+Project Console: https://console.firebase.google.com/project/angular-pwa-ssr-seo-firebase/overview
+Hosting URL: https://angular-pwa-ssr-seo-firebase.firebaseapp.com
+```
+
 
 Browse to [`http://localhost:4000/`](http://localhost:4000/)
 
