@@ -466,13 +466,13 @@ ncu
 ncu -u
 ```
 
-## Compile the Angular Client and Express Server Code.
+## Compile the Angular Client and Firebase functions.
 
 ```
 npm run build:ssr
 ```
 
-## Run Angular Client and Express Server.
+## Run Angular Client with Firebase Server.
 
 ```
 npm run serve:ssr
