@@ -2,7 +2,7 @@
 
 An Angular Referance PWA with SSR, SEO and Firebase (angularpwassrseofbref)
 
-Check out the blog post for this project ()[An Angular Reference PWA with SSR, SEO and Firebase](https://wpbest.io/an-angular-reference-pwa-with-ssr-seo-and-firebase)
+Check out the blog post for this project: [An Angular Reference PWA with SSR, SEO and Firebase](https://wpbest.io/an-angular-reference-pwa-with-ssr-seo-and-firebase)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.1.0.
 
